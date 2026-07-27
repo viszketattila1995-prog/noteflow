@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: noteflow
+  datasource:
+    url: jdbc:postgresql://localhost:5432/noteflow
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    open-in-view: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-expiration-ms: 900000
