@@ -7,10 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -22,5 +21,22 @@ public class NoteController {
     @PostMapping
     public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody CreateNoteRequest createNote) {
         return ResponseEntity.status(HttpStatus.CREATED).body(noteService.createNote(createNote));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NoteResponse>> getAllNotes() {
+        List<NoteResponse> noteResponseList = noteService.getAllNotes();
+        return ResponseEntity.ok(noteResponseList);
+    }
+
+    @GetMapping("/{id:\\d+}")
+    public ResponseEntity<NoteResponse> getNoteById(@PathVariable Long id) {
+        return ResponseEntity.ok(noteService.getNotById(id));
+    }
+
+    @DeleteMapping("/{id:\\d+}")
+    public ResponseEntity<Void> deleteNotById(@PathVariable Long id) {
+        noteService.deleteNoteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

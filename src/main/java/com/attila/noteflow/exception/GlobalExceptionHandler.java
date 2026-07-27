@@ -3,6 +3,7 @@ package com.attila.noteflow.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,5 +33,25 @@ public class GlobalExceptionHandler {
     public ApiError handleUnexcepted(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on {}", request.getRequestURI(), ex);
         return new ApiError(Instant.now(), "INTERNAL_SERVER_ERROR", "An unexcepted error occurred", request.getRequestURI());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
+        log.error("User not found exception {}", request.getRequestURI(), ex);
+        return new ApiError(Instant.now(), "USER_NOT_FOUND", "User not found", request.getRequestURI());
+    }
+
+    @ExceptionHandler(NoteNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleNoteNotFoundException(NoteNotFoundException ex, HttpServletRequest request) {
+        log.error("Not with this id {} doesn't exists", request.getRequestURI(), ex);
+        return new ApiError(Instant.now(), "NOTE_NOT_FOUND", "Note not found", request.getRequestURI());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiError handeBadCredentialException(HttpServletRequest request) {
+        return new ApiError(Instant.now(), "UNAUTHORIZED", "Invalid email or password", request.getRequestURI());
     }
 }
