@@ -45,13 +45,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoteNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNoteNotFoundException(NoteNotFoundException ex, HttpServletRequest request) {
-        log.error("Not with this id {} doesn't exists", request.getRequestURI(), ex);
+        log.error("Note with this id {} doesn't exists", request.getRequestURI(), ex);
         return new ApiError(Instant.now(), "NOTE_NOT_FOUND", "Note not found", request.getRequestURI());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiError handeBadCredentialException(HttpServletRequest request) {
+    public ApiError handeBadCredentialException(BadCredentialsException ex, HttpServletRequest request) {
+        log.warn("Failed login attempt: {}", request.getRequestURI(), ex);
         return new ApiError(Instant.now(), "UNAUTHORIZED", "Invalid email or password", request.getRequestURI());
+    }
+
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleEmailAlreadyExistsEmail(EmailAlreadyUsedException ex, HttpServletRequest request) {
+        log.error("User with this email {} already exists",request.getRequestURI(), ex);
+        return new ApiError(Instant.now(), "EMAIL_ALREADY_USED", "This email is already used", request.getRequestURI());
     }
 }
